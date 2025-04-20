@@ -6,13 +6,13 @@ import (
 )
 
 func main() {
-	// Start TCP server on port 5000
-	ln, err := net.Listen("tcp", ":5001")
+	// Start TCP server on port 6000
+	ln, err := net.Listen("tcp", ":6000")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer ln.Close()
-	log.Println("TCP server listening on :5001")
+	log.Println("TCP server listening on :6000")
 
 	// Accept connections forever
 	for {
