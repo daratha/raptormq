@@ -1,11 +1,13 @@
 package main
 
 import (
+  "github.com/daratha/raptormq/internal/core"
 	"log"
 	"net"
 )
 
 func main() {
+  pubsub := core.NewPubsub()
 	// Start TCP server on port 6000
 	ln, err := net.Listen("tcp", ":6000")
 	if err != nil {
@@ -22,11 +24,11 @@ func main() {
 			continue
 		}
 
-    handleConnection(conn) 
+    go handleConnection(conn, pubsub) 
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, pubsub *core.Pubsub) {
   defer conn.Close()
   buf := make([]byte, 1024)
 
@@ -37,5 +39,10 @@ func handleConnection(conn net.Conn) {
       return
     }
     log.Printf("Message from %s: %q", conn.RemoteAddr(), string(buf[:n]) )
+
+    if string(buf[:3]) == "SUB" {
+      topic := string(buf[4:n-1])
+      pubsub.Subscribe(conn, topic)
+    }
   }
 }
